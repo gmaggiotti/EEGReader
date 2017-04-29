@@ -30,11 +30,11 @@ def main():
     blackColor = pygame.Color(0,0,0)
     redColor = pygame.Color(255,0,0)
     greenColor = pygame.Color(0,255,0)
-    deltaColor = pygame.Color(100,0,0)
-    thetaColor = pygame.Color(0,0,255)
-    alphaColor = pygame.Color(255,0,0)
-    betaColor = pygame.Color(0,255,00)
-    gammaColor = pygame.Color(0,255,255)
+    deltaColor = pygame.Color(0,0,128)
+    thetaColor = pygame.Color(238,130,238)
+    alphaColor = greenColor
+    betaColor = pygame.Color(255,255,0)
+    gammaColor = redColor
 
 
     background_img = pygame.image.load("pygame_background.png")
@@ -70,15 +70,15 @@ def main():
                 for i in range (flen-1):
                     value = float(spectrum[i]*1000)
                     if i<3:
-                        color = deltaColor
+                        color = deltaColor  #blue
                     elif i<8:
-                        color = thetaColor
+                        color = thetaColor  #violet
                     elif i<13:
-                        color = alphaColor
+                        color = alphaColor  #green
                     elif i<30:
-                        color = betaColor
+                        color = betaColor  #yellow
                     else:
-                        color = gammaColor
+                        color = gammaColor  #red
                     pygame.draw.rect(window, color, (25+i*10, 400-value, 5, value))
             else:
                 pass
