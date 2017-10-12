@@ -9,6 +9,7 @@ from mindwave.parser import ThinkGearParser, TimeSeriesRecorder
 from mindwave.bluetooth_headset import connect_magic, connect_bluetooth_addr
 from mindwave.bluetooth_headset import BluetoothError
 from example_startup import mindwave_startup
+from Talk import Talk
 
 description = """Pygame Example
 """
@@ -20,6 +21,7 @@ parser = ThinkGearParser(recorders= [recorder])
 
 def main():
     pygame.init()
+    t = Talk()
 
     fpsClock= pygame.time.Clock()
 
@@ -86,7 +88,11 @@ def main():
             pygame.draw.circle(window, greenColor, (800,200), 60/2,1)
             pygame.draw.circle(window, greenColor, (800,200), 100/2,1)
             window.blit(attention_img, (760,260))
-            pygame.draw.circle(window, redColor, (700,200), int(recorder.meditation[-1]/2))
+            meditation = int(recorder.meditation[-1]/2)
+            print meditation
+            if(meditation >= 40 ):
+                t.sayYes()
+            pygame.draw.circle(window, redColor, (700,200), meditation)
             pygame.draw.circle(window, greenColor, (700,200), 60/2, 1)
             pygame.draw.circle(window, greenColor, (700,200), 100/2, 1)
 
