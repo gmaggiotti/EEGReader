@@ -10,6 +10,7 @@ from mindwave.bluetooth_headset import connect_magic, connect_bluetooth_addr
 from mindwave.bluetooth_headset import BluetoothError
 from example_startup import mindwave_startup
 from Talk import Talk
+from nnet.A4NN import A4NN
 
 description = """Pygame Example
 """
@@ -22,6 +23,11 @@ parser = ThinkGearParser(recorders= [recorder])
 def main():
     pygame.init()
     t = Talk()
+    net = A4NN()
+    net.train()
+    dataset = [30,30,30,30,30,30,30,30,30,30,30,30,30,14,14,14,14,14,14,14,14,14,14,14,14,11,11,11,11,11,11,11,11,11,11,11,10,10,10,10,10,12,14,10]
+    cont=0
+    result=0
 
     fpsClock= pygame.time.Clock()
 
@@ -90,8 +96,17 @@ def main():
             window.blit(attention_img, (760,260))
             meditation = int(recorder.meditation[-1]/2)
             print meditation
-            if(meditation >= 40 ):
+            dataset.extend([meditation])
+            del dataset[0]
+            if(cont>=22):
+                result = net.predict(dataset)
+                cont=0
+            cont += 1
+
+            if(result >= 0.999 ):
+                print "Prediction: "+str(result)
                 t.sayYes()
+                result=0
             pygame.draw.circle(window, redColor, (700,200), meditation)
             pygame.draw.circle(window, greenColor, (700,200), 60/2, 1)
             pygame.draw.circle(window, greenColor, (700,200), 100/2, 1)
