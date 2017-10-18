@@ -23,11 +23,15 @@ parser = ThinkGearParser(recorders= [recorder])
 def main():
     pygame.init()
     t = Talk()
-    net = A4NN()
-    net.train()
-    dataset = [30,30,30,30,30,30,30,30,30,30,30,30,30,14,14,14,14,14,14,14,14,14,14,14,14,11,11,11,11,11,11,11,11,11,11,11,10,10,10,10,10,12,14,10]
+    med_net = A4NN()
+    med_net.train()
+    alpha_net = A4NN()
+    alpha_net.train()
+    meditation_dataset = [30,30,30,30,30,30,30,30,30,30,30,30,30,14,14,14,14,14,14,14,14,14,14,14,14,11,11,11,11,11,11,11,11,11,11,11,10,10,10,10,10,12,14,10]
+    alpha_dataset = [21,21,21,22,22,22,22,22,22,22,22,22,22,22,21,21,21,21,21,21,21,21,21,21,21,21,20,20,20,20,20,20,19,19,19,19,20,20,20,19,19,19,19,18]
     cont=0
-    result=0
+    result_med= result_alpha = 0.0
+    alpha=0
 
     fpsClock= pygame.time.Clock()
 
@@ -83,6 +87,8 @@ def main():
                         color = thetaColor  #violet
                     elif i<13:
                         color = alphaColor  #green
+                        if i ==12:
+                            alpha = int(value)
                     elif i<30:
                         color = betaColor  #yellow
                     else:
@@ -94,19 +100,31 @@ def main():
             pygame.draw.circle(window, greenColor, (800,200), 60/2,1)
             pygame.draw.circle(window, greenColor, (800,200), 100/2,1)
             window.blit(attention_img, (760,260))
+
             meditation = int(recorder.meditation[-1]/2)
-            print meditation
-            dataset.extend([meditation])
-            del dataset[0]
-            if(cont>=22):
-                result = net.predict(dataset)
+            print "med: "+str(meditation)+" alpha: "+str(alpha)
+
+            meditation_dataset.extend([meditation])
+            del meditation_dataset[0]
+
+            alpha_dataset.extend([alpha])
+            del alpha_dataset[0]
+
+            if cont>=22:
+                result_med = med_net.predict(meditation_dataset)
+                result_alpha = alpha_net.predict(alpha_dataset)
+                print "prediction alpha: "+str(result_alpha)
                 cont=0
             cont += 1
 
-            if(result >= 0.999 ):
-                print "Prediction: "+str(result)
-                t.sayYes()
-                result=0
+            if result_alpha > 0.80 :
+                print "prediction alpha: "+str(result_alpha)
+                t.say("alpha")
+                result_alpha = 0
+            elif result_med >= 0.999 :
+                print "prediction med: "+str(result_med)
+                t.say("med")
+                result_med=0
             pygame.draw.circle(window, redColor, (700,200), meditation)
             pygame.draw.circle(window, greenColor, (700,200), 60/2, 1)
             pygame.draw.circle(window, greenColor, (700,200), 100/2, 1)

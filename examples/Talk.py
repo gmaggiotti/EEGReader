@@ -17,4 +17,9 @@ class Talk:
         time.sleep(1)
         self.engine.runAndWait()
 
+    def say(self, txt):
+        self.engine.say(txt)
+        time.sleep(1)
+        self.engine.runAndWait()
+
 
