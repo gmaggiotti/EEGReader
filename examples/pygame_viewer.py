@@ -11,6 +11,8 @@ from mindwave.bluetooth_headset import BluetoothError
 from example_startup import mindwave_startup
 from Talk import Talk
 from nnet.A4NN import A4NN
+from nnet.AlphaA4NN import AlphaA4NN
+from nnet.WinkA4NN import WinkA4NN
 
 description = """Pygame Example
 """
@@ -24,11 +26,26 @@ def main():
     pygame.init()
     t = Talk()
     med_net = A4NN()
+    print ""
+    print "meditation signal training...."
+    print ""
     med_net.train()
-    alpha_net = A4NN()
+    alpha_net = AlphaA4NN()
+    print ""
+    print "Alpha signal training...."
+    print ""
     alpha_net.train()
+    wink_net = WinkA4NN()
+    print ""
+    print "Wink signal training...."
+    print ""
+    wink_net.train()
+
     meditation_dataset = [30,30,30,30,30,30,30,30,30,30,30,30,30,14,14,14,14,14,14,14,14,14,14,14,14,11,11,11,11,11,11,11,11,11,11,11,10,10,10,10,10,12,14,10]
     alpha_dataset = [21,21,21,22,22,22,22,22,22,22,22,22,22,22,21,21,21,21,21,21,21,21,21,21,21,21,20,20,20,20,20,20,19,19,19,19,20,20,20,19,19,19,19,18]
+    raw_dataset = [87, 87, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 107, 107, 107, 107, 107, 107, 167, 247, 55, 29, 59,
+                    59, 29, 29, 29, 129, 129, 129, 129, 307, 309, 92, 37, 60, 72, 75, 97]
+
     cont=0
     result_med= result_alpha = 0.0
     alpha=0
@@ -102,7 +119,7 @@ def main():
             window.blit(attention_img, (760,260))
 
             meditation = int(recorder.meditation[-1]/2)
-            print "med: "+str(meditation)+" alpha: "+str(alpha)
+            #print "med: "+str(meditation)+" alpha: "+str(alpha)
 
             meditation_dataset.extend([meditation])
             del meditation_dataset[0]
@@ -110,21 +127,37 @@ def main():
             alpha_dataset.extend([alpha])
             del alpha_dataset[0]
 
+            max = recorder.raw[-100:].max()
+            raw_dataset.extend([max])
+            del raw_dataset[0]
+
+            #predict wink, apha and med
             if cont>=22:
                 result_med = med_net.predict(meditation_dataset)
                 result_alpha = alpha_net.predict(alpha_dataset)
-                print "prediction alpha: "+str(result_alpha)
                 cont=0
             cont += 1
 
-            if result_alpha > 0.80 :
-                print "prediction alpha: "+str(result_alpha)
-                t.say("alpha")
-                result_alpha = 0
-            elif result_med >= 0.999 :
+            if wink_net.predict(raw_dataset) > 0.8 :
+                print "prediction Wink"
+                print ""
+                #t.say("wink")
+                raw_dataset = [0]*39
+                meditation_dataset =alpha_dataset = [0]*44
+            elif result_med >= 0.99 :
                 print "prediction med: "+str(result_med)
-                t.say("med")
+                print ""
+                #t.say("med")
                 result_med=0
+                meditation_dataset =alpha_dataset = [0]*44
+            elif result_alpha > 0.80 :
+                print "prediction alpha: "+str(result_alpha)
+                print ""
+                #t.say("alpha")
+                result_alpha = 0
+                meditation_dataset =alpha_dataset = [0]*44
+
+
             pygame.draw.circle(window, redColor, (700,200), meditation)
             pygame.draw.circle(window, greenColor, (700,200), 60/2, 1)
             pygame.draw.circle(window, greenColor, (700,200), 100/2, 1)

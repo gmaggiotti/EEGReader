@@ -9,7 +9,7 @@ def sigmoid(x, deriv=False):
 path = os.path.dirname(os.path.abspath(__file__))
 np.random.seed(0)
 
-class A4NN:
+class AlphaA4NN:
 
     def __init__(self):
 
@@ -58,7 +58,7 @@ class A4NN:
 
 
 def test():
-    net = A4NN()
+    net = AlphaA4NN()
     net.train()
     test_dataset = [21,21,21,22,22,22,22,22,22,22,22,22,22,22,21,21,21,21,21,21,21,21,21,21,21,21,20,20,20,20,20,20,19,19,19,19,20,20,20,19,19,19,19,18]
     result = net.predict(test_dataset)
